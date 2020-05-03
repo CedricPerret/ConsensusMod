@@ -5,7 +5,7 @@ public class Individual implements Comparable<Individual> {
     // Influence
     private double alpha;
     // Opinion
-    private double f;
+    private double x;
     
     
     public static int nbreIndividual = 0;
@@ -16,39 +16,36 @@ public class Individual implements Comparable<Individual> {
     public Individual(){
         System.out.println("Creation of a default individual");
         alpha = 0;
-        f = 0;
+        x = 0;
         nbreIndividual++;
     }
     
-    public Individual(double pAlpha, double pF){
+    public Individual(double pAlpha, double pX){
         alpha = pAlpha;
-        f = pF; 
+        x = pX; 
         nbreIndividual++;
     }
     
     public Individual(Individual pIndividual){
         alpha = pIndividual.alpha;
-        f = pIndividual.f;
+        x = pIndividual.x;
         nbreIndividual++;
     }
     
     public void setAlpha(double pAlpha){
         alpha = pAlpha;
     }
-    public void setF(double pF){
-        f = pF;
+    public void setX(double pX){
+        x = pX;
     }
 
     public double getAlpha(){
         return alpha;
     }
-    public double getF(){
-        return f;
+    public double getX(){
+        return x;
     }
 
-    public String Description(){
-        return " \nalpha = " + alpha + "\nw = " + w + "\nf = " + f + "\nz = " + z + "\nm = " + m;
-    }
     
     @Override
     public int compareTo(Individual obj)

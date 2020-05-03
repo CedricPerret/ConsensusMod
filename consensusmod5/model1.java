@@ -16,7 +16,8 @@ public class model1 extends Thread {
     private int nIndIni;
     private int Nsimul; 
     private int limListener; 
-    private double fThr; 
+    private double xThr; 
+    private double kAlpha;
     private double leadAlpha; 
     private double follAlpha; 
     private PrintWriter pw;
@@ -25,7 +26,8 @@ public class model1 extends Thread {
     public model1(int nIndIni,
      int Nsimul, 
      int limListener, 
-     double fThr, 
+     double xThr, 
+     double kAlpha,
      double leadAlpha, 
      double follAlpha, 
      PrintWriter pw,
@@ -33,7 +35,8 @@ public class model1 extends Thread {
         this.nIndIni = nIndIni;
         this.Nsimul = Nsimul;
         this.limListener = limListener;
-        this.fThr = fThr;
+        this.xThr = xThr;
+        this.kAlpha = kAlpha;
         this.leadAlpha = leadAlpha;
         this.follAlpha = follAlpha;
         this.pw = pw;
@@ -43,8 +46,8 @@ public class model1 extends Thread {
     
     public void run(){
         
-        double fVar; double fVarLead; int nEvent; int speaker; int limListener2 = limListener; String resTemp ="";
-        double fMax = 1;
+        double sdX; double sdXLead; int nEvent; int speaker; int limListener2 = limListener; String resTemp ="";
+        double xMax = 1;
         double alphaSum; 
         double diffAlpha; double newFSpeaker;                                                       //CHANGE
         int[] listenerList;
@@ -52,7 +55,7 @@ public class model1 extends Thread {
         if(nIndIni <= limListener){limListener2 = nIndIni-1;}                   //If there are less people than the limit of listener, speaker talks to all
         //else{limListener2 = Math.round((limListener*nIndIni)/100);}           //If limListener is a percentage
         
-        //Id We do the simulation for each possible composition of the population
+        //If We do the simulation for each possible composition of the population
         	//int[] nLeadList = new int[nIndIni];
         	//for(int i=0;i<nLeadList.length;i++) {nLeadList[i]=i;}
         //For specific list of nLead
@@ -68,7 +71,7 @@ public class model1 extends Thread {
                 for(int i = 0; i < nLead; i++){                                 //Number of leaders
                 	//With random opinion
                 	if(detail == false) {
-                		popNow.add(new Individual(leadAlpha, Math.random()*fMax));
+                		popNow.add(new Individual(leadAlpha, Math.random()*xMax));
                 	}
                     //For fixed leader opinion (the most spread out possible)
                 	if(detail == true) {
@@ -76,26 +79,26 @@ public class model1 extends Thread {
                 		popNow.add(new Individual(leadAlpha, x_lead_init));
                 	}
                 }
-                fVarLead = Utility.variancePref(popNow);
+                sdXLead = Utility.sdPref(popNow);
                 for(int i = nLead; i < nIndIni; i++){                           //Number of follower
-                    popNow.add(new Individual(follAlpha, Math.random()*fMax));
+                    popNow.add(new Individual(follAlpha, Math.random()*xMax));
                 }
 
-                fVar = Utility.variancePref(popNow);                                    //Initial variance of f
+                sdX = Utility.sdPref(popNow);                                    //Initial variance of f
                 nEvent = -1;
                 
                 alphaSum = 0.0d;                                                 // Sum of the alpha to calculate the probability of being chosen as a speaker
                 double[] probSpeaker = new double[nIndIni];                     //Array of the probability of each individual
                 for(int i=0; i<nIndIni; i++){                       
-                    alphaSum += Math.pow(popNow.get(i).getAlpha(),4);
+                    alphaSum += Math.pow(popNow.get(i).getAlpha(),kAlpha);
                 }
                 double probTemp = 0;                
                 for(int i=0; i<nIndIni; i++){                                   //We calculate the weigthed probabilities
-                    probSpeaker[i]= probTemp + (Math.pow(popNow.get(i).getAlpha(),4)/alphaSum);
+                    probSpeaker[i]= probTemp + (Math.pow(popNow.get(i).getAlpha(),kAlpha)/alphaSum);
                     probTemp = probSpeaker[i];
                 }                                                   
                 //Simulation of consensus decision making
-                while(fVar > fThr){
+                while(sdX > xThr){
                     if(nEvent != -1){
                         speaker = Utility.probSample(probSpeaker, Math.random());         //Sample a speaker as a function of alpha
                         if(nIndIni <= limListener2){limListener2 = nIndIni-1;}  
@@ -105,10 +108,10 @@ public class model1 extends Thread {
                             //ConsensusMod1 Only comparison
                             diffAlpha =  popNow.get(speaker).getAlpha() - popNow.get(listenerList[i]).getAlpha();
                             if(diffAlpha <= 0){diffAlpha = 0.01;}
-                            popNow.get(listenerList[i]).setF(popNow.get(listenerList[i]).getF() + diffAlpha * (popNow.get(speaker).getF()-popNow.get(listenerList[i]).getF()));
+                            popNow.get(listenerList[i]).setX(popNow.get(listenerList[i]).getX() + diffAlpha * (popNow.get(speaker).getX()-popNow.get(listenerList[i]).getX()));
                             
                         }
-                        fVar = Utility.variancePref(popNow);
+                        sdX = Utility.sdPref(popNow);
                     }
                     //Counter of time of consensus
                     nEvent++;
@@ -120,13 +123,13 @@ public class model1 extends Thread {
                                 +","
                                 + nLead
                                 +","
-                                + popNow.get(k).getF()
+                                + popNow.get(k).getX()
                             	+","
                             	+ popNow.get(k).getAlpha()
                             	+","
                             	+ k
                             	+","
-                            	+ fVar        
+                            	+ sdX        
                             	+","
                             	+ iSimul  
                             	+ "\r\n";
@@ -147,9 +150,9 @@ public class model1 extends Thread {
                             +","
                             + limListener
                             +","
-                            + fVarLead
+                            + sdXLead
                             +","        
-                            + fThr
+                            + xThr
                             +","        
                             + leadAlpha
                             +","        

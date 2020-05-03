@@ -19,19 +19,20 @@ public class ConsensusMod5 {
 
     public static void main(String[] args) {
 
-        int nEvent;double fVar;int speaker;int listener;
+        int nEvent;double sdX;int speaker;int listener;
         
         //Parameters
         int nIndIni;
         int Nsimul;
         int limListener;
-        double fThr;
+        double xThr;
+        double kAlpha;
         
         //Leader profile
         double leadAlpha;
         //Follower profile
         double follAlpha;
-        String wd = "C:/Users/40011091/Phd-Thèse/A1-Projects/LeadPublicGame/D. Results/Res thesis/";
+        String wd = System.getProperty("user.dir")+"/";
         String nameFile = "";
         PrintWriter pw = null;
         String resTemp = "";
@@ -46,16 +47,17 @@ public class ConsensusMod5 {
       nameFile = wd + "ConsensusMod7Data_" + 
               "N500_fThr0.05_nL30_diffAlpha0.7" + 
               ".txt";
+      
       try {pw = new PrintWriter(new FileWriter(nameFile));} 
       catch (IOException ex) {System.out.println(ex);}
       resTemp = "";
-      //double[] xRange = {0.01,0.025,0.05,0.075,0.1};
-      //for(int i = 0; i< xRange.length ; i += 1) {
+
+
       	for(int pNIndIni= 500; pNIndIni <= 500; pNIndIni+=500){
-      		pool.execute(new Thread(new model1(nIndIni = pNIndIni, Nsimul = 1, limListener = 30, fThr = 0.05, 
+      		pool.execute(new Thread(new model1(nIndIni = pNIndIni, Nsimul = 1, limListener = 30, xThr = 0.05, 
+      				kAlpha = 4,
       				leadAlpha = 0.85, follAlpha = 0.15,
       				pw = pw, detail = false)));
-      //	}
       }
       
       toComplete=((ThreadPoolExecutor) pool).getTaskCount()-((ThreadPoolExecutor) pool).getCompletedTaskCount();
@@ -69,7 +71,6 @@ public class ConsensusMod5 {
       try {
 		pool.awaitTermination(600, TimeUnit.SECONDS);
 	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 

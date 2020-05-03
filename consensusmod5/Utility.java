@@ -21,7 +21,7 @@ public class Utility {
         return(pList);
     }
     
-    //Method to simulate mutation event affecting the social strategy
+  //Sample an individual except one
     public static int randomSampleOther(int pArrayL, int pIndex){
         //if(pLArray == 1){System.out.println("BUG randomSampleOther List too short");}
         ArrayList<Integer> resList = new ArrayList();
@@ -31,7 +31,7 @@ public class Utility {
         return resList.get(index);
         }
     
-    //Method to simulate mutation event affecting the social strategy
+    //Sample a number of individuals except one
     public static int[] randomSampleOtherList(int pArrayL, int pSampleSize, int pIndex){
         //if(pLArray == 1){System.out.println("BUG randomSampleOther List too short");}
         ArrayList<Integer> resList = new ArrayList();
@@ -64,14 +64,14 @@ public class Utility {
                         }
     
     //Calcul of standart deviation
-    public static double variancePref(List<Individual> pList){
+    public static double sdPref(List<Individual> pList){
         double M= 0;
         double S = 0;
         double oldM;
         for(int i = 0; i < pList.size(); i++){
             oldM = M; 
-            M += (pList.get(i).getF()-M)/(i+1);
-            S += (pList.get(i).getF()-M) * (pList.get(i).getF()-oldM);
+            M += (pList.get(i).getX()-M)/(i+1);
+            S += (pList.get(i).getX()-M) * (pList.get(i).getX()-oldM);
         }
         return (Math.sqrt(S/(pList.size()-1)));
     }
@@ -79,7 +79,7 @@ public class Utility {
     public static double meanPref(List<Individual> pList){
         double sumF = 0;
         for(int i = 0; i < pList.size(); i++){
-            sumF += pList.get(i).getF();
+            sumF += pList.get(i).getX();
         }
         return(sumF/(pList.size()));
     }
